@@ -1,26 +1,15 @@
-:root {
-  --white: #ffffff;
-  --gray-text: rgba(255,255,255,0.72);
-  --radius-large: 18px;
-  --radius-pill: 999px;
-  --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.35);
-  --app-max-width: 430px;
-
-  --hud-bg: rgba(255, 255, 255, 0.12);
-  --hud-blur: blur(14px);
-  --hud-border: rgba(255,255,255,0.22);
-}
-
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
 html, body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   background: #000;
-  color: var(--white);
+  color: #fff;
   height: 100%;
 }
 
@@ -33,7 +22,7 @@ body {
 .app {
   position: relative;
   width: 100%;
-  max-width: var(--app-max-width);
+  max-width: 480px;
   height: 100vh;
   overflow: hidden;
 }
@@ -66,11 +55,9 @@ body {
 /* HUD pills */
 .pill {
   padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  background: var(--hud-bg);
-  backdrop-filter: var(--hud-blur);
-  border: 1px solid var(--hud-border);
-  color: var(--white);
+  border-radius: 999px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
   font-weight: 900;
   font-size: 14px;
   display: inline-flex;
@@ -97,7 +84,6 @@ body {
   color: #fff;
   font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.02em;
 }
 
 /* CAMERA */
@@ -107,6 +93,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   margin-top: 10px;
+  position: relative; /* important for overlay */
 }
 
 .camera-view {
@@ -116,6 +103,8 @@ body {
   overflow: hidden;
   background: rgba(0,0,0,0.25);
   box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+  position: relative;
+  z-index: 1;
 }
 
 #qr-reader video {
@@ -143,15 +132,20 @@ body {
   font-size: 16px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   background: linear-gradient(90deg, #4c63ff, #7b3fff);
-  color: var(--white);
+  color: #fff;
   box-shadow: 0 10px 28px rgba(76, 99, 255, 0.45);
   transition: transform 0.15s ease;
+  cursor: pointer;
 }
 
-.primary-button--wide { width: 100%; }
-.primary-button:active { transform: translateY(1px); }
+.primary-button--wide {
+  width: 100%;
+}
+
+.primary-button:active {
+  transform: translateY(1px);
+}
 
 /* Ghost / love controls panel */
 .panel {
@@ -172,30 +166,40 @@ body {
   font-size: 28px;
 }
 
+/* Ghost overlay */
 .ghost-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   z-index: 10;
+  pointer-events: none; /* allow clicks to pass through except button */
 }
 
-.ghost-text {
+.ghost-overlay .ghost-text {
   font-size: 120px;
   animation: float 1.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Start Over button on top */
+.ghost-start-over {
+  pointer-events: auto;  /* now it is clickable */
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 60%;
+  max-width: 280px;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-12px); }
-}
-
-.ghosted-label {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 900;
 }
 
 .hidden {
