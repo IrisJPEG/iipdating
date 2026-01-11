@@ -1,122 +1,102 @@
-// ---------- STATE ----------
 let html5QrCode = null;
 let scannerRunning = false;
 let scanLockUntil = 0;
 
-let love = 50;
-let currentPerson = null;
-
-// ---------- DOM ----------
 const screens = {
   start: document.getElementById("screen-start"),
-  game: document.getElementById("screen-game"),
+  camera: document.getElementById("screen-camera"),
+  ghost: document.getElementById("screen-ghost"),
 };
 
 const startButton = document.getElementById("startButton");
-const toastArea = document.getElementById("toastArea");
+const startOverButton = document.getElementById("startOverButton");
 
-const topBar = document.getElementById("topBar");
-const nameEl = document.getElementById("currentName");
-const loveEl = document.getElementById("loveMeter");
+const personInfo = document.getElementById("personInfo");
+const personName = document.getElementById("personName");
+const personAge = document.getElementById("personAge");
 
-const controlsPanel = document.getElementById("controlsPanel");
-const ghostedPanel = document.getElementById("ghostedPanel");
-const ghostOverlay = document.getElementById("ghostOverlay");
+const heartMeter = document.getElementById("heartMeter");
+const heartUp = document.getElementById("heartUp");
+const heartDown = document.getElementById("heartDown");
+const ghostButton = document.getElementById("ghostButton");
 
-const loveUpBtn = document.getElementById("loveUp");
-const loveDownBtn = document.getElementById("loveDown");
-const ghostBtn = document.getElementById("ghostBtn");
-const startOverBtn = document.getElementById("startOver");
-
-// ---------- SCREEN ----------
+// ----------------- UI -----------------
 function showScreen(name) {
-  Object.values(screens).forEach(el =>
-    el.classList.remove("screen--active")
-  );
+  Object.values(screens).forEach((el) => el.classList.remove("screen--active"));
   screens[name].classList.add("screen--active");
 }
 
-// ---------- TOAST ----------
-function showToast(text, time = 1500) {
-  toastArea.innerHTML = `<div class="toast">${text}</div>`;
-  setTimeout(() => toastArea.innerHTML = "", time);
-}
-
-// ---------- CAMERA ----------
+// ----------------- QR Scanner -----------------
 function initScanner() {
   if (html5QrCode) return;
   html5QrCode = new Html5Qrcode("qr-reader");
 }
 
 function startScanner() {
+  if (!html5QrCode) initScanner();
   if (scannerRunning) return;
-  initScanner();
 
-  html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    onScan
-  ).then(() => scannerRunning = true);
+  html5QrCode
+    .start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess)
+    .then(() => {
+      scannerRunning = true;
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Could not start camera. Check permissions.");
+    });
 }
 
 function stopScanner() {
-  if (!scannerRunning) return;
-  html5QrCode.stop().then(() => scannerRunning = false);
+  if (!html5QrCode || !scannerRunning) return;
+  html5QrCode.stop().then(() => {
+    scannerRunning = false;
+  });
 }
 
-// ---------- QR ----------
-function onScan(text) {
+function onScanSuccess(decodedText) {
   const now = Date.now();
   if (now < scanLockUntil) return;
-  scanLockUntil = now + 800;
+  scanLockUntil = now + 900;
 
-  const [name, age] = text.split("|");
-
-  currentPerson = name;
-  nameEl.textContent = `${name}, ${age} y.o.`;
-  showToast(`Age: ${age}`);
-
-  topBar.classList.remove("hidden");
-  controlsPanel.classList.remove("hidden");
+  try {
+    const data = JSON.parse(decodedText);
+    if (!data.name || !data.age) throw "Invalid QR";
+    showPerson(data.name, data.age);
+  } catch {
+    alert("QR does not contain valid person info!");
+  }
 }
 
-// ---------- GAME ----------
-function changeLove(v) {
-  love = Math.max(0, Math.min(100, love + v));
-  loveEl.textContent = love;
-}
-
-// ---------- GHOST ----------
-function ghost() {
+// ----------------- Person & Heart -----------------
+function showPerson(name, age) {
   stopScanner();
-  ghostOverlay.classList.remove("hidden");
-  controlsPanel.classList.add("hidden");
-  topBar.classList.add("hidden");
-  ghostedPanel.classList.remove("hidden");
+  personName.textContent = name;
+  personAge.textContent = `Age: ${age}`;
+  heartMeter.value = 50;
+  personInfo.classList.remove("hidden");
 }
 
-// ---------- RESET ----------
-function resetGame() {
-  love = 50;
-  loveEl.textContent = love;
-  nameEl.textContent = "";
-  currentPerson = null;
-
-  ghostOverlay.classList.add("hidden");
-  ghostedPanel.classList.add("hidden");
-  controlsPanel.classList.add("hidden");
-  topBar.classList.add("hidden");
-
-  startScanner();
-}
-
-// ---------- EVENTS ----------
-startButton.addEventListener("click", () => {
-  showScreen("game");
-  resetGame();
+heartUp.addEventListener("click", () => {
+  heartMeter.value = Math.min(100, heartMeter.value + 10);
 });
 
-loveUpBtn.addEventListener("click", () => changeLove(10));
-loveDownBtn.addEventListener("click", () => changeLove(-10));
-ghostBtn.addEventListener("click", ghost);
-startOverBtn.addEventListener("click", resetGame);
+heartDown.addEventListener("click", () => {
+  heartMeter.value = Math.max(0, heartMeter.value - 10);
+});
+
+ghostButton.addEventListener("click", () => {
+  personInfo.classList.add("hidden");
+  showScreen("ghost");
+});
+
+// ----------------- Navigation -----------------
+startButton.addEventListener("click", () => {
+  showScreen("camera");
+  startScanner();
+});
+
+startOverButton.addEventListener("click", () => {
+  showScreen("camera");
+  startScanner();
+});
