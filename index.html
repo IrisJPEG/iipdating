@@ -1,64 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ghost Dating</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Heart Scan App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-<div class="app">
+  <div class="app">
 
-  <!-- START -->
-  <section id="screen-start" class="screen screen--active screen--blue-bg">
-    <div class="screen-content screen-content--centered">
-      <h1 style="font-size:42px">👻 Ghost Dating</h1>
-      <button id="startButton" class="primary-button primary-button--wide">
-        Start Dating
-      </button>
-    </div>
-  </section>
-
-  <!-- GAME -->
-  <section id="screen-game" class="screen screen--blue-bg">
-
-    <!-- TOP BAR (HIDDEN UNTIL SCAN) -->
-    <header id="topBar" class="top-bar hidden">
-      <div class="pill">❤️ <span id="loveMeter">50</span>%</div>
-      <div class="pill" id="currentName"></div>
-    </header>
-
-    <div id="toastArea" class="toast-area"></div>
-
-    <div class="camera-area">
-      <div id="qr-reader" class="camera-view"></div>
-
-      <!-- GHOST OVERLAY -->
-      <div id="ghostOverlay" class="ghost-overlay hidden">
-        <div class="ghost-text">👻</div>
-        <button id="startOver" class="primary-button primary-button--wide ghost-start-over">
-          Start Over
-        </button>
+    <!-- START SCREEN -->
+    <section id="screen-start" class="screen screen--active screen--blue-bg">
+      <div class="screen-content screen-content--centered">
+        <h1 class="title">Heart Scanner 💖</h1>
+        <button id="startButton" class="primary-button primary-button--wide">Start Dating</button>
       </div>
+    </section>
 
-    </div>
+    <!-- CAMERA SCAN SCREEN -->
+    <section id="screen-camera" class="screen screen--blue-bg">
+      <div class="screen-content screen-content--camera">
+        <div id="qr-reader" class="camera-view"></div>
 
-    <!-- CONTROLS (HIDDEN UNTIL SCAN) -->
-    <div id="controlsPanel" class="panel hidden">
-      <div class="love">
-        <button id="loveDown" class="primary-button">⬇</button>
-        <button id="loveUp" class="primary-button">⬆</button>
+        <div id="personInfo" class="person-info hidden">
+          <h2 id="personName">Name</h2>
+          <p id="personAge">Age</p>
+
+          <div class="heart-meter-container">
+            <button id="heartDown" class="heart-arrow">⬇️</button>
+            <progress id="heartMeter" max="100" value="50"></progress>
+            <button id="heartUp" class="heart-arrow">⬆️</button>
+          </div>
+
+          <button id="ghostButton" class="primary-button">Ghost</button>
+        </div>
       </div>
-      <button id="ghostBtn" class="primary-button primary-button--wide">
-        👻 Ghost
-      </button>
-    </div>
+    </section>
 
-  </section>
-</div>
+    <!-- GHOST SCREEN -->
+    <section id="screen-ghost" class="screen screen--blue-bg">
+      <div class="screen-content screen-content--centered">
+        <div class="ghost-cover">👻</div>
+        <button id="startOverButton" class="primary-button primary-button--wide">Start Over</button>
+      </div>
+    </section>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script src="app.js"></script>
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="app.js"></script>
 </body>
 </html>
