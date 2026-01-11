@@ -86,14 +86,13 @@ body {
   font-weight: 800;
 }
 
-/* CAMERA */
 .camera-area {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   margin-top: 10px;
-  position: relative; /* important for overlay */
+  position: relative; /* overlay positioning */
 }
 
 .camera-view {
@@ -104,7 +103,7 @@ body {
   background: rgba(0,0,0,0.25);
   box-shadow: 0 18px 45px rgba(0,0,0,0.55);
   position: relative;
-  z-index: 1;
+  z-index: 1; /* keep behind overlay */
 }
 
 #qr-reader video {
@@ -176,23 +175,20 @@ body {
   align-items: center;
   flex-direction: column;
   z-index: 10;
-  pointer-events: none; /* allow clicks to pass through except button */
+  pointer-events: auto; /* allow clicks now */
 }
 
+/* Ghost text */
 .ghost-overlay .ghost-text {
   font-size: 120px;
   animation: float 1.6s ease-in-out infinite;
-  pointer-events: none;
+  pointer-events: none; /* text itself doesn’t block button */
 }
 
-/* Start Over button on top */
+/* Start Over button */
 .ghost-start-over {
-  pointer-events: auto;  /* now it is clickable */
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
+  pointer-events: auto; 
+  margin-top: 20px;
   width: 60%;
   max-width: 280px;
 }
@@ -205,3 +201,4 @@ body {
 .hidden {
   display: none !important;
 }
+
